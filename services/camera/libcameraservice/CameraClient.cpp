@@ -83,8 +83,10 @@ status_t CameraClient::initialize(camera_module_t *module) {
             (void *)mCameraId);
 
     // Enable zoom, error, focus, and metadata messages by default
-    enableMsgType(CAMERA_MSG_ERROR | CAMERA_MSG_ZOOM | CAMERA_MSG_FOCUS |
-                  CAMERA_MSG_PREVIEW_METADATA 
+    enableMsgType(CAMERA_MSG_ERROR | CAMERA_MSG_ZOOM | CAMERA_MSG_FOCUS
+#ifndef QCOM_HARDWARE
+                  | CAMERA_MSG_PREVIEW_METADATA 
+#endif
 #ifndef OMAP_ICS_CAMERA
                   | CAMERA_MSG_FOCUS_MOVE
 #endif
@@ -249,7 +251,9 @@ void CameraClient::disconnect() {
     // Release the held ANativeWindow resources.
     if (mPreviewWindow != 0) {
 #ifdef QCOM_HARDWARE
+#ifndef NO_UPDATE_PREVIEW
         mHardware->setPreviewWindow(0);
+#endif
 #endif
         disconnectWindow(mPreviewWindow);
         mPreviewWindow = 0;
@@ -294,6 +298,15 @@ status_t CameraClient::setPreviewWindow(const sp<IBinder>& binder,
             native_window_set_buffers_transform(window.get(), mOrientation);
             result = mHardware->setPreviewWindow(window);
         }
+#ifdef QCOM_HARDWARE
+#ifndef NO_UPDATE_PREVIEW
+    } else {
+        if (window != 0) {
+            native_window_set_buffers_transform(window.get(), mOrientation);
+        }
+        result = mHardware->setPreviewWindow(window);
+#endif
+#endif
     }
 
     if (result == NO_ERROR) {

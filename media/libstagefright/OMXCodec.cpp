@@ -306,24 +306,6 @@ void OMXCodec::findMatchingCodecs(
 uint32_t OMXCodec::getComponentQuirks(
         const MediaCodecList *list, size_t index) {
     uint32_t quirks = 0;
-
-    if (list->codecHasQuirk(
-                index, "needs-flush-before-disable")) {
-        quirks |= kNeedsFlushBeforeDisable;
-    }
-    if (list->codecHasQuirk(
-                index, "requires-flush-complete-emulation")) {
-        quirks |= kRequiresFlushCompleteEmulation;
-    }
-    if (list->codecHasQuirk(
-                index, "supports-multiple-frames-per-input-buffer")) {
-        quirks |= kSupportsMultipleFramesPerInputBuffer;
-    }
-    if (list->codecHasQuirk(
-                index, "requires-larger-encoder-output-buffer")) {
-        quirks |= kRequiresLargerEncoderOutputBuffer;
-    }
-
     if (list->codecHasQuirk(
                 index, "requires-allocate-on-input-ports")) {
         quirks |= kRequiresAllocateBufferOnInputPorts;
@@ -356,7 +338,7 @@ uint32_t OMXCodec::getComponentQuirks(
 
     quirks |= QCOMXCodec::getQCComponentQuirks(list,index);
 #endif
-#if defined(OMAP_ENHANCEMENT) || defined(QCOM_HARDWARE)
+#ifdef OMAP_ENHANCEMENT
     if (list->codecHasQuirk(
                 index, "avoid-memcopy-input-recording-frames")) {
       quirks |= kAvoidMemcopyInputRecordingFrames;
@@ -2465,7 +2447,7 @@ void OMXCodec::on_message(const omx_message &msg) {
 
             // Buffer could not be released until empty buffer done is called.
             if (info->mMediaBuffer != NULL) {
-#if defined(OMAP_ENHANCEMENT) || defined(QCOM_HARDWARE)
+#ifdef OMAP_ENHANCEMENT
                 if (mIsEncoder &&
                     (mQuirks & kAvoidMemcopyInputRecordingFrames)) {
                     // If zero-copy mode is enabled this will send the
@@ -3476,7 +3458,7 @@ bool OMXCodec::drainInputBuffer(BufferInfo *info) {
         }
 
         bool releaseBuffer = true;
-#if defined(OMAP_ENHANCEMENT) || defined(QCOM_HARDWARE)
+#ifdef OMAP_ENHANCEMENT
         if (mIsEncoder && (mQuirks & kAvoidMemcopyInputRecordingFrames)) {
             CHECK(mOMXLivesLocally && offset == 0);
 
@@ -3549,7 +3531,7 @@ bool OMXCodec::drainInputBuffer(BufferInfo *info) {
 #endif // USE_SAMSUNG_COLORFORMAT
         }
 
-#if defined(OMAP_ENHANCEMENT) || defined(QCOM_HARDWARE)
+#ifdef OMAP_ENHANCEMENT
 	}
 #endif
 
@@ -5261,7 +5243,7 @@ status_t OMXCodec::pause() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if defined(OMAP_ENHANCEMENT) || defined(QCOM_HARDWARE)
+#ifdef OMAP_ENHANCEMENT
 void OMXCodec::restorePatchedDataPointer(BufferInfo *info) {
     CHECK(mIsEncoder && (mQuirks & kAvoidMemcopyInputRecordingFrames));
     CHECK(mOMXLivesLocally);

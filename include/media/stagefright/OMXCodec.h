@@ -105,7 +105,6 @@ struct OMXCodec : public MediaSource,
         kRequiresLargerEncoderOutputBuffer    = 2048,
         kOutputBuffersAreUnreadable           = 4096,
 #ifdef QCOM_HARDWARE
-        kAvoidMemcopyInputRecordingFrames     = 8192,
         kRequiresGlobalFlush                  = 0x20000000, // 2^29
         kRequiresWMAProComponent              = 0x40000000, //2^30
 #endif
@@ -372,7 +371,7 @@ private:
     void dumpPortStatus(OMX_U32 portIndex);
 
     status_t configureCodec(const sp<MetaData> &meta);
-#if defined(OMAP_ENHANCEMENT) || defined (QCOM_HARDWARE)
+#if defined(OMAP_ENHANCEMENT)
     void restorePatchedDataPointer(BufferInfo *info);
 #endif
 

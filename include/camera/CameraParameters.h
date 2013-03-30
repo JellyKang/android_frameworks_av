@@ -117,7 +117,6 @@ public:
     void setPictureSize(int width, int height);
     void getPictureSize(int *width, int *height) const;
     void getSupportedPictureSizes(Vector<Size> &sizes) const;
-    void set3DFileFormat(const char* buffer);
     void setPictureFormat(const char *format);
     const char *getPictureFormat() const;
 #ifdef QCOM_HARDWARE
@@ -183,22 +182,20 @@ public:
     static const char KEY_SUPPORTED_PREVIEW_FRAME_RATE_MODES[];
     static const char KEY_PREVIEW_FRAME_RATE_AUTO_MODE[];
     static const char KEY_PREVIEW_FRAME_RATE_FIXED_MODE[];
+#ifdef QCOM_LEGACY_CAM_PARAMS
     static const char KEY_CAPTURE_MODE[];
     static const char KEY_SUPPORTED_CAPTURE_MODES[];
     static const char KEY_PICTURE_COUNT[];
     static const char KEY_MAX_BURST_PICTURE_COUNT[];
     static const char KEY_SUPPORTED_CONTINUOUS_AF[];
-    static const char KEY_TAKING_PICTURE_ZOOM[];
-    static const char KEY_PANORAMA_MODE[];
-    static const char PANORAMA_MODE_NOT_INPROGRESS[];
-    static const char PANORAMA_MODE_INPROGRESS[];
+    static const char KEY_SUPPORTED_CAF[];
     static const char CAPTURE_MODE_NORMAL[];
     static const char CAPTURE_MODE_BURST[];
     static const char CAPTURE_MODE_CONTI_BURST[];
     static const char CAPTURE_MODE_HDR[];
     static const char CAPTURE_MODE_HJR[];
     static const char CAPTURE_MODE_PANORAMA[];
-
+#endif
 #endif
     // The dimensions for captured pictures in pixels (width x height).
     // Example value: "1024x768". Read/write.
@@ -206,8 +203,6 @@ public:
     // Supported dimensions for captured pictures in pixels.
     // Example value: "2048x1536,1024x768". Read only.
     static const char KEY_SUPPORTED_PICTURE_SIZES[];
-    //HTC 3D color format
-    static const char KEY_SUPPORTED_3D_FILE_FORMAT[];
     // The image format for captured pictures. See CAMERA_MSG_COMPRESSED_IMAGE
     // in frameworks/base/include/camera/Camera.h.
     // Example value: "jpeg" or PIXEL_FORMAT_XXX constants. Read/write.
@@ -754,7 +749,6 @@ public:
     static const char SCENE_MODE_BACKLIGHT[];
     static const char SCENE_MODE_FLOWERS[];
     static const char SCENE_MODE_AR[];
-    static const char SCENE_MODE_OFF[];
 #endif
     // Applications are looking for a barcode. Camera driver will be optimized
     // for barcode reading.
@@ -845,6 +839,7 @@ public:
     static const char FOCUS_MODE_CONTINUOUS_PICTURE[];
 
 #ifdef QCOM_HARDWARE
+#ifdef QCOM_LEGACY_CAM_PARAMS
     static const char FOCUS_MODE_CONTINUOUS_CAMERA[];
 
     // Values for Continuous AF
@@ -854,7 +849,8 @@ public:
     static const char CONTINUOUS_AF_OFF[] ;
     static const char CONTINUOUS_AF_ON[] ;
     static const char KEY_CONTINUOUS_AF[] ;
-
+    static const char KEY_CAF[] ;
+#endif
     // Normal focus mode. Applications should call
     // CameraHardwareInterface.autoFocus to start the focus in this mode.
     static const char FOCUS_MODE_NORMAL[];
@@ -878,17 +874,17 @@ public:
 
     static const char KEY_SHARPNESS[];
     static const char KEY_MAX_SHARPNESS[];
-#ifdef QCOM_HARDWARE
+#ifdef QCOM_LEGACY_CAM_PARAMS
     static const char KEY_MIN_SHARPNESS[];
 #endif
     static const char KEY_CONTRAST[];
     static const char KEY_MAX_CONTRAST[];
-#ifdef QCOM_HARDWARE
+#ifdef QCOM_LEGACY_CAM_PARAMS
     static const char KEY_MIN_CONTRAST[];
 #endif
     static const char KEY_SATURATION[];
     static const char KEY_MAX_SATURATION[];
-#ifdef QCOM_HARDWARE
+#ifdef QCOM_LEGACY_CAM_PARAMS
     static const char KEY_MIN_SATURATION[];
 #endif
 
@@ -915,10 +911,6 @@ public:
     // Values for Face Detection settings.
     static const char FACE_DETECTION_OFF[];
     static const char FACE_DETECTION_ON[];
-
-    // Values for HTC 3D image settings.
-    static const char FILE_FORMAT_MPO[];
-    static const char FILE_FORMAT_JPS[];
 
     // Values for MCE settings.
     static const char MCE_ENABLE[];
@@ -965,7 +957,9 @@ public:
     int getOrientation() const;
     void setOrientation(int orientation);
     void setPreviewFpsRange(int minFPS,int maxFPS);
+#ifdef QCOM_LEGACY_CAM_PARAMS
     void setPostviewSize(int x, int y);
+#endif
     void getSupportedHfrSizes(Vector<Size> &sizes) const;
 #endif
 

@@ -320,10 +320,7 @@ status_t CameraSource::configureCamera(
     if (width != -1 && height != -1) {
         if (!isVideoSizeSupported(width, height, sizes)) {
             ALOGE("Video dimension (%dx%d) is unsupported", width, height);
-            //HACK FOR 1080p:
-	    if ( height != 1088 ) {
-	      return BAD_VALUE;
-	    }
+            return BAD_VALUE;
         }
         if (isSetVideoSizeSupportedByCamera) {
             params->setVideoSize(width, height);
@@ -350,13 +347,11 @@ status_t CameraSource::configureCamera(
         ALOGV("Supported frame rates: %s", supportedFrameRates);
         char buf[4];
         snprintf(buf, 4, "%d", frameRate);
-#ifndef HTC_3D_SUPPORT  // HTC uses invalid frame rates intentionally on the 3D camera
         if (strstr(supportedFrameRates, buf) == NULL) {
             ALOGE("Requested frame rate (%d) is not supported: %s",
                 frameRate, supportedFrameRates);
             return BAD_VALUE;
         }
-#endif
 
         // The frame rate is supported, set the camera to the requested value.
         params->setPreviewFrameRate(frameRate);
@@ -454,15 +449,11 @@ status_t CameraSource::checkFrameRate(
 
     // Check the actual video frame rate against the target/requested
     // video frame rate.
-#ifndef HTC_3D_SUPPORT  // HTC uses invalid frame rates intentionally on the 3D camera
-    if (frameRateActual != 31 || frameRate != 30) { /*HTC camera driver "fix" to bypass 31/30 FPS mismatch */
-        if (frameRate != -1 && (frameRateActual - frameRate) != 0) {
-            ALOGE("Failed to set preview frame rate to %d fps. The actual "
-                    "frame rate is %d", frameRate, frameRateActual);
-            return UNKNOWN_ERROR;
-        }
+    if (frameRate != -1 && (frameRateActual - frameRate) != 0) {
+        ALOGE("Failed to set preview frame rate to %d fps. The actual "
+                "frame rate is %d", frameRate, frameRateActual);
+        return UNKNOWN_ERROR;
     }
-#endif
 
     // Good now.
     mVideoFrameRate = frameRateActual;

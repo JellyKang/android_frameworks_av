@@ -3,10 +3,6 @@ include $(CLEAR_VARS)
 
 include frameworks/av/media/libstagefright/codecs/common/Config.mk
 
-ifeq ($(BOARD_HTC_3D_SUPPORT),true)
-   LOCAL_CFLAGS += -DHTC_3D_SUPPORT
-endif
-
 LOCAL_SRC_FILES:=                         \
         ACodec.cpp                        \
         AACExtractor.cpp                  \
@@ -165,23 +161,6 @@ LOCAL_SHARED_LIBRARIES += \
         libdl
 
 LOCAL_CFLAGS += -Wno-multichar
-
-ifdef ($(TARGET_QCOM_DISPLAY_VARIANT),caf)
-DISPLAY := display-caf
-else
-ifdef ($(TARGET_QCOM_DISPLAY_VARIANT),legacy)
-DISPLAY := display-legacy
-else
-DISPLAY := display
-endif
-endif
-
-ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
-    LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/$(DISPLAY)/libgralloc
-    ifeq ($(BOARD_CAMERA_USE_MM_HEAP),true)
-        LOCAL_CFLAGS += -DCAMERA_MM_HEAP
-    endif
-endif
 
 ifeq ($(BOARD_USE_SAMSUNG_COLORFORMAT), true)
 LOCAL_CFLAGS += -DUSE_SAMSUNG_COLORFORMAT
